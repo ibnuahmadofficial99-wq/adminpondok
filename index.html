@@ -5,17 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Informasi Manajemen Sekolah (SIMS)</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- React & ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <!-- Babel (Untuk kompilasi JSX di dalam browser) -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <!-- Phosphor Icons (Pengganti Lucide untuk Standalone HTML) -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
@@ -24,8 +17,8 @@
             display: none;
         }
         .hide-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 </head>
@@ -35,14 +28,13 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        // Import Hooks dari React Global
         const { useState, useEffect, useMemo } = React;
         
-        // --- ICON MAPPER ---
         const createIcon = (baseClass) => ({ size = 24, className = '', color }) => {
             return <i className={`ph ${baseClass} ${className}`} style={{ fontSize: size, color, display: 'inline-block' }}></i>;
         };
 
+        // Kumpulan Ikon Umum
         const Users = createIcon('ph-users');
         const Wallet = createIcon('ph-wallet');
         const BookOpen = createIcon('ph-book-open');
@@ -50,8 +42,7 @@
         const Calendar = createIcon('ph-calendar');
         const Settings = createIcon('ph-gear');
         const LogOut = createIcon('ph-sign-out');
-        const Menu = createIcon('ph-list');
-        const X = createIcon('ph-x');
+        const ListIcon = createIcon('ph-list');
         const FileText = createIcon('ph-file-text');
         const CheckCircle = createIcon('ph-check-circle');
         const TrendingUp = createIcon('ph-trend-up');
@@ -59,7 +50,6 @@
         const Clock = createIcon('ph-clock');
         const Award = createIcon('ph-medal');
         const BookMarked = createIcon('ph-bookmark-simple');
-        const DollarSign = createIcon('ph-currency-dollar');
         const Activity = createIcon('ph-activity');
         const Globe = createIcon('ph-globe');
         const ArrowLeft = createIcon('ph-arrow-left');
@@ -76,8 +66,26 @@
         const ShieldCheck = createIcon('ph-shield-check');
         const Moon = createIcon('ph-moon');
         const CheckSquare = createIcon('ph-check-square');
+        const X = createIcon('ph-x');
 
-        // --- REUSABLE COMPONENTS ---
+        const UsersThree = createIcon('ph-users-three');
+        const HouseLine = createIcon('ph-house-line');
+        const Warning = createIcon('ph-warning');
+        const Envelope = createIcon('ph-envelope');
+        const MoonStars = createIcon('ph-moon-stars');
+        const Medal = createIcon('ph-medal');
+        const FirstAid = createIcon('ph-first-aid');
+        const Broom = createIcon('ph-broom');
+        const IdentificationCard = createIcon('ph-identification-card');
+        const Money = createIcon('ph-money');
+        const CalendarCheck = createIcon('ph-calendar-check');
+        const Suitcase = createIcon('ph-suitcase');
+        const Briefcase = createIcon('ph-briefcase');
+        const Basketball = createIcon('ph-basketball');
+        const Megaphone = createIcon('ph-megaphone');
+        const Bank = createIcon('ph-bank');
+        const ChartBar = createIcon('ph-chart-bar');
+
         const StatCard = ({ title, value, icon: Icon, color }) => (
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex items-center space-x-4 hover:shadow-md transition-shadow">
             <div className={`p-4 rounded-full text-white flex items-center justify-center ${color}`}>
@@ -90,13 +98,11 @@
           </div>
         );
 
-        // --- COMPONENT: DATA GRID / TABLE (CRUD SIMULATOR) ---
         const DataGrid = ({ title, columns, data, onAdd, onEdit, onDelete }) => {
           const [searchQuery, setSearchQuery] = useState('');
           const [currentPage, setCurrentPage] = useState(1);
           const itemsPerPage = 5;
 
-          // Filter Data
           const filteredData = useMemo(() => {
             return data.filter(item => 
               Object.values(item).some(val => 
@@ -105,24 +111,20 @@
             );
           }, [data, searchQuery]);
 
-          // Pagination
           const totalPages = Math.ceil(filteredData.length / itemsPerPage);
           const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
           return (
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-              {/* Toolbar */}
               <div className="p-4 border-b border-gray-100 bg-gray-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h3 className="text-lg font-bold text-gray-800">{title}</h3>
                 <div className="flex w-full sm:w-auto items-center gap-2">
                   <div className="relative flex-1 sm:flex-none">
                     <MagnifyingGlass size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                     <input 
-                      type="text" 
-                      placeholder="Cari data..." 
+                      type="text" placeholder="Cari data..." 
                       className="w-full sm:w-64 pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
-                      value={searchQuery}
-                      onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                      value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                     />
                   </div>
                   <button onClick={onAdd} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition shadow-sm whitespace-nowrap">
@@ -131,14 +133,11 @@
                 </div>
               </div>
 
-              {/* Table */}
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse whitespace-nowrap">
                   <thead>
                     <tr className="bg-white border-b border-gray-200 text-gray-600 text-sm">
-                      {columns.map((col, idx) => (
-                        <th key={idx} className="p-4 font-semibold">{col.header}</th>
-                      ))}
+                      {columns.map((col, idx) => <th key={idx} className="p-4 font-semibold">{col.header}</th>)}
                       <th className="p-4 font-semibold text-right">Aksi</th>
                     </tr>
                   </thead>
@@ -146,59 +145,43 @@
                     {paginatedData.length > 0 ? paginatedData.map((row, idx) => (
                       <tr key={idx} className="hover:bg-gray-50 border-b border-gray-50 last:border-0 transition">
                         {columns.map((col, cIdx) => (
-                          <td key={cIdx} className="p-4 text-gray-700">
-                            {col.render ? col.render(row[col.accessor], row) : row[col.accessor]}
-                          </td>
+                          <td key={cIdx} className="p-4 text-gray-700">{col.render ? col.render(row[col.accessor], row) : row[col.accessor]}</td>
                         ))}
                         <td className="p-4 text-right space-x-2">
-                          <button onClick={() => onEdit(row)} className="p-1.5 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition" title="Edit">
-                            <Pencil size={16} />
-                          </button>
-                          <button onClick={() => onDelete(row)} className="p-1.5 bg-red-50 text-red-600 rounded hover:bg-red-100 transition" title="Hapus">
-                            <Trash size={16} />
-                          </button>
+                          <button onClick={() => onEdit(row)} className="p-1.5 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition"><Pencil size={16} /></button>
+                          <button onClick={() => onDelete(row)} className="p-1.5 bg-red-50 text-red-600 rounded hover:bg-red-100 transition"><Trash size={16} /></button>
                         </td>
                       </tr>
-                    )) : (
-                      <tr>
-                        <td colSpan={columns.length + 1} className="p-8 text-center text-gray-500">
-                          Data tidak ditemukan.
-                        </td>
-                      </tr>
-                    )}
+                    )) : <tr><td colSpan={columns.length + 1} className="p-8 text-center text-gray-500">Data tidak ditemukan.</td></tr>}
                   </tbody>
                 </table>
               </div>
 
-              {/* Pagination */}
               <div className="p-4 border-t border-gray-100 bg-white flex justify-between items-center text-sm">
-                <span className="text-gray-500">
-                  Menampilkan {paginatedData.length > 0 ? ((currentPage - 1) * itemsPerPage) + 1 : 0} - {Math.min(currentPage * itemsPerPage, filteredData.length)} dari {filteredData.length} data
-                </span>
+                <span className="text-gray-500">Menampilkan {paginatedData.length > 0 ? ((currentPage - 1) * itemsPerPage) + 1 : 0} - {Math.min(currentPage * itemsPerPage, filteredData.length)} dari {filteredData.length} data</span>
                 <div className="flex space-x-1">
-                  <button 
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage(prev => prev - 1)}
-                    className="p-1 rounded border border-gray-200 disabled:opacity-50 hover:bg-gray-50"
-                  >
-                    <CaretLeft size={16} />
-                  </button>
-                  <button 
-                    disabled={currentPage === totalPages || totalPages === 0}
-                    onClick={() => setCurrentPage(prev => prev + 1)}
-                    className="p-1 rounded border border-gray-200 disabled:opacity-50 hover:bg-gray-50"
-                  >
-                    <CaretRight size={16} />
-                  </button>
+                  <button disabled={currentPage === 1} onClick={() => setCurrentPage(prev => prev - 1)} className="p-1 rounded border border-gray-200 disabled:opacity-50 hover:bg-gray-50"><CaretLeft size={16} /></button>
+                  <button disabled={currentPage === totalPages || totalPages === 0} onClick={() => setCurrentPage(prev => prev + 1)} className="p-1 rounded border border-gray-200 disabled:opacity-50 hover:bg-gray-50"><CaretRight size={16} /></button>
                 </div>
               </div>
             </div>
           );
         };
 
-        // --- DASHBOARD ADMIN & CRUD GURU ---
-        const DashboardAdmin = ({ setCurrentView }) => {
-          const adminMenus = [
+        const AdminDashboardOverview = () => (
+          <div className="space-y-6 pb-20 lg:pb-0">
+            <h2 className="text-2xl font-bold text-gray-800">Dashboard Utama</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard title="Total Santri" value="1,240" icon={UsersThree} color="bg-blue-500" />
+              <StatCard title="Total Pegawai" value="145" icon={IdentificationCard} color="bg-green-500" />
+              <StatCard title="Total Rombel" value="42" icon={LayoutDashboard} color="bg-purple-500" />
+              <StatCard title="Pemasukan Bulan Ini" value="Rp 125 Jt" icon={Bank} color="bg-emerald-500" />
+            </div>
+          </div>
+        );
+
+        const AdminAkademikView = ({ setCurrentView }) => {
+          const menus = [
             { id: 'kaldik', icon: Calendar, title: 'Kalender Pendidikan', color: 'text-blue-600', bg: 'bg-blue-50' },
             { id: 'data_guru', icon: Users, title: 'Data Guru', color: 'text-emerald-600', bg: 'bg-emerald-50' },
             { id: 'kelas', icon: LayoutDashboard, title: 'Manajemen Kelas', color: 'text-purple-600', bg: 'bg-purple-50' },
@@ -212,17 +195,61 @@
 
           return (
             <div className="space-y-6 pb-20 lg:pb-0">
-              <h2 className="text-2xl font-bold text-gray-800">Akademik & Belajar (Admin)</h2>
+              <h2 className="text-2xl font-bold text-gray-800">Modul Akademik & Belajar</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {adminMenus.map((m) => (
-                  <button 
-                    key={m.id}
-                    onClick={() => setCurrentView(m.id)}
-                    className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md hover:-translate-y-1 transition-all group"
-                  >
-                    <div className={`p-4 rounded-xl ${m.bg} ${m.color} mb-3 group-hover:scale-110 transition-transform`}>
-                      <m.icon size={28} />
-                    </div>
+                {menus.map((m) => (
+                  <button key={m.id} onClick={() => setCurrentView(m.id)} className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md hover:-translate-y-1 transition-all group">
+                    <div className={`p-4 rounded-xl ${m.bg} ${m.color} mb-3 group-hover:scale-110 transition-transform`}><m.icon size={28} /></div>
+                    <span className="font-bold text-gray-800 text-sm">{m.title}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        };
+
+        const AdminKesantrianView = ({ setCurrentView }) => {
+          const menus = [
+            { id: 'induk_santri', icon: UsersThree, title: 'Data Induk Santri', color: 'text-blue-600', bg: 'bg-blue-50' },
+            { id: 'asrama', icon: HouseLine, title: 'Manajemen Asrama', color: 'text-emerald-600', bg: 'bg-emerald-50' },
+            { id: 'buku_pelanggaran', icon: Warning, title: 'Buku Pelanggaran', color: 'text-red-600', bg: 'bg-red-50' },
+            { id: 'perizinan', icon: Envelope, title: 'Perizinan', color: 'text-orange-600', bg: 'bg-orange-50' },
+            { id: 'mutabaah', icon: MoonStars, title: 'Mutabaah Yaumiyah', color: 'text-indigo-600', bg: 'bg-indigo-50' },
+            { id: 'prestasi', icon: Medal, title: 'Prestasi Santri', color: 'text-yellow-600', bg: 'bg-yellow-50' },
+            { id: 'rekam_medis', icon: FirstAid, title: 'Rekam Medis', color: 'text-pink-600', bg: 'bg-pink-50' },
+            { id: 'piket_asrama', icon: Broom, title: 'Piket Asrama', color: 'text-teal-600', bg: 'bg-teal-50' },
+          ];
+
+          return (
+            <div className="space-y-6 pb-20 lg:pb-0">
+              <h2 className="text-2xl font-bold text-gray-800">Modul Kesantrian & Musyrifah</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {menus.map((m) => (
+                  <button key={m.id} className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md hover:-translate-y-1 transition-all group">
+                    <div className={`p-4 rounded-xl ${m.bg} ${m.color} mb-3 group-hover:scale-110 transition-transform`}><m.icon size={28} /></div>
+                    <span className="font-bold text-gray-800 text-sm">{m.title}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        };
+
+        const AdminHRISView = ({ setCurrentView }) => {
+          const menus = [
+            { id: 'master_pegawai', icon: IdentificationCard, title: 'Master Pegawai', color: 'text-blue-600', bg: 'bg-blue-50' },
+            { id: 'penggajian', icon: Money, title: 'Penggajian & Honor', color: 'text-emerald-600', bg: 'bg-emerald-50' },
+            { id: 'absensi_pegawai', icon: CalendarCheck, title: 'Absensi Pegawai', color: 'text-orange-600', bg: 'bg-orange-50' },
+            { id: 'izin_cuti', icon: Suitcase, title: 'Izin dan Cuti', color: 'text-purple-600', bg: 'bg-purple-50' },
+          ];
+
+          return (
+            <div className="space-y-6 pb-20 lg:pb-0">
+              <h2 className="text-2xl font-bold text-gray-800">Modul HRIS & SDM</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {menus.map((m) => (
+                  <button key={m.id} className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md hover:-translate-y-1 transition-all group">
+                    <div className={`p-4 rounded-xl ${m.bg} ${m.color} mb-3 group-hover:scale-110 transition-transform`}><m.icon size={28} /></div>
                     <span className="font-bold text-gray-800 text-sm">{m.title}</span>
                   </button>
                 ))}
@@ -232,61 +259,218 @@
         };
 
         const AdminDataGuru = ({ onBack }) => {
-          // Dummy State untuk CRUD
           const [guruList, setGuruList] = useState([
             { id: 'G001', nama: 'Ust. Abdul Somad, Lc., MA.', nip: '198001012005011001', jabatan: 'Guru Fiqih', status: 'Aktif' },
             { id: 'G002', nama: 'Ustz. Oki Setiana, S.Pd.', nip: '198502022010012002', jabatan: 'Guru B. Arab', status: 'Aktif' },
             { id: 'G003', nama: 'Ust. Hanan Attaki, Lc.', nip: '198103032008011003', jabatan: 'Guru Tahfidz', status: 'Cuti' },
-            { id: 'G004', nama: 'Ahmad Dhani, S.Kom.', nip: '199004042015011004', jabatan: 'Guru TIK', status: 'Aktif' },
-            { id: 'G005', nama: 'Fatimah Zahra, M.Pd.', nip: '198805052012012005', jabatan: 'Guru Matematika', status: 'Aktif' },
-            { id: 'G006', nama: 'Budi Santoso, S.Si.', nip: '198206062007011006', jabatan: 'Guru IPA', status: 'Pensiun' },
           ]);
 
           const columns = [
-            { header: 'ID Guru', accessor: 'id' },
+            { header: 'ID', accessor: 'id' },
             { header: 'Nama Lengkap', accessor: 'nama', render: (val) => <span className="font-bold text-gray-800">{val}</span> },
             { header: 'NIP/NIY', accessor: 'nip' },
-            { header: 'Mata Pelajaran', accessor: 'jabatan' },
+            { header: 'Mapel', accessor: 'jabatan' },
             { header: 'Status', accessor: 'status', render: (val) => (
-              <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                val === 'Aktif' ? 'bg-green-100 text-green-700' : 
-                val === 'Cuti' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'
-              }`}>{val}</span>
+              <span className={`px-2 py-1 rounded-full text-xs font-bold ${val === 'Aktif' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{val}</span>
             )},
           ];
 
           return (
             <div className="space-y-6 pb-20 lg:pb-0">
               <div className="flex items-center space-x-3">
-                <button onClick={onBack} className="p-2 bg-white rounded-lg border border-gray-200 hover:bg-gray-50">
-                  <ArrowLeft size={20} className="text-gray-600" />
-                </button>
+                <button onClick={onBack} className="p-2 bg-white rounded-lg border border-gray-200 hover:bg-gray-50"><ArrowLeft size={20} className="text-gray-600" /></button>
                 <h2 className="text-2xl font-bold text-gray-800">Manajemen Data Guru</h2>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <StatCard title="Total Guru" value={guruList.length} icon={Users} color="bg-blue-500" />
-                <StatCard title="Guru Aktif" value={guruList.filter(g => g.status === 'Aktif').length} icon={CheckCircle} color="bg-green-500" />
-                <StatCard title="Sedang Cuti" value={guruList.filter(g => g.status === 'Cuti').length} icon={Clock} color="bg-yellow-500" />
-              </div>
-
-              <DataGrid 
-                title="Daftar Tenaga Pendidik"
-                columns={columns}
-                data={guruList}
-                onAdd={() => alert("Membuka form Tambah Guru Baru (CRUD - Create)")}
-                onEdit={(row) => alert(`Membuka form Edit untuk: ${row.nama} (CRUD - Update)`)}
-                onDelete={(row) => {
-                  if(window.confirm(`Yakin ingin menghapus ${row.nama} dari sistem? (CRUD - Delete)`)) {
-                    setGuruList(guruList.filter(g => g.id !== row.id));
-                  }
-                }}
-              />
+              <DataGrid title="Daftar Tenaga Pendidik" columns={columns} data={guruList} onAdd={() => console.log('Add')} onEdit={() => console.log('Edit')} onDelete={(row) => setGuruList(guruList.filter(g => g.id !== row.id))} />
             </div>
           );
         };
 
-        // --- DASHBOARD LAINNYA ---
+        const AdminKaldik = ({ onBack }) => {
+          const [currentDate, setCurrentDate] = useState(new Date(2026, 4, 1)); // Default Mei 2026
+          const [events, setEvents] = useState([
+            { id: 1, date: '2026-05-01', title: 'Hari Buruh Internasional', type: 'libur' },
+            { id: 2, date: '2026-05-14', title: 'Kenaikan Isa Almasih', type: 'libur' },
+            { id: 3, date: '2026-05-18', title: 'Ujian Akhir Semester', type: 'ujian' },
+            { id: 4, date: '2026-05-25', title: 'Rapat Kenaikan Kelas', type: 'rapat' },
+            { id: 5, date: '2026-05-29', title: 'Penerimaan Raport', type: 'kegiatan' }
+          ]);
+          const [showModal, setShowModal] = useState(false);
+          const [selectedDate, setSelectedDate] = useState('');
+          const [newEventTitle, setNewEventTitle] = useState('');
+          const [newEventType, setNewEventType] = useState('kegiatan');
+
+          const year = currentDate.getFullYear();
+          const month = currentDate.getMonth();
+          const daysInMonth = new Date(year, month + 1, 0).getDate();
+          const firstDayOfMonth = new Date(year, month, 1).getDay();
+
+          const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+          const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+
+          const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
+          const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
+
+          const handleDayClick = (day) => {
+            const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            setSelectedDate(formattedDate);
+            setShowModal(true);
+          };
+
+          const addEvent = () => {
+            if (!newEventTitle) return;
+            setEvents([...events, { id: Date.now(), date: selectedDate, title: newEventTitle, type: newEventType }]);
+            setShowModal(false);
+            setNewEventTitle('');
+            setNewEventType('kegiatan');
+          };
+
+          const deleteEvent = (id) => {
+            setEvents(events.filter(e => e.id !== id));
+          };
+
+          const eventTypes = {
+            libur: { label: 'Hari Libur', color: 'bg-red-100 text-red-700 border-red-200', dot: 'bg-red-500' },
+            ujian: { label: 'Ujian/Assesmen', color: 'bg-orange-100 text-orange-700 border-orange-200', dot: 'bg-orange-500' },
+            kegiatan: { label: 'Kegiatan Sekolah', color: 'bg-blue-100 text-blue-700 border-blue-200', dot: 'bg-blue-500' },
+            rapat: { label: 'Rapat Guru', color: 'bg-purple-100 text-purple-700 border-purple-200', dot: 'bg-purple-500' },
+          };
+
+          return (
+            <div className="space-y-6 pb-20 lg:pb-0">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-center space-x-3">
+                  <button onClick={onBack} className="p-2 bg-white rounded-lg border border-gray-200 hover:bg-gray-50"><ArrowLeft size={20} className="text-gray-600" /></button>
+                  <h2 className="text-2xl font-bold text-gray-800">Kalender Pendidikan</h2>
+                </div>
+                <button onClick={() => {
+                    const today = new Date();
+                    setSelectedDate(`${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`);
+                    setShowModal(true);
+                }} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center transition shadow-sm w-full md:w-auto justify-center">
+                   <Plus size={16} className="mr-2" /> Tambah Agenda
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Komponen Kalender Grid */}
+                <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden p-4 md:p-6">
+                   <div className="flex justify-between items-center mb-6 bg-gray-50 p-2 rounded-lg border border-gray-100">
+                     <button onClick={prevMonth} className="p-2 bg-white hover:bg-gray-100 rounded-md border border-gray-200"><CaretLeft size={20}/></button>
+                     <h3 className="text-xl font-bold text-gray-800">{monthNames[month]} {year}</h3>
+                     <button onClick={nextMonth} className="p-2 bg-white hover:bg-gray-100 rounded-md border border-gray-200"><CaretRight size={20}/></button>
+                   </div>
+                   
+                   <div className="grid grid-cols-7 gap-1 md:gap-2 text-center mb-2">
+                     {dayNames.map((day, idx) => (
+                       <div key={day} className={`font-semibold text-xs md:text-sm py-2 bg-gray-50 rounded-md ${idx === 0 ? 'text-red-600' : 'text-gray-600'}`}>{day}</div>
+                     ))}
+                   </div>
+                   
+                   <div className="grid grid-cols-7 gap-1 md:gap-2">
+                     {Array(firstDayOfMonth).fill(null).map((_, idx) => <div key={`empty-${idx}`} className="h-16 md:h-28 rounded-lg bg-gray-50/50 border border-transparent"></div>)}
+                     
+                     {Array(daysInMonth).fill(null).map((_, idx) => {
+                       const day = idx + 1;
+                       const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                       const dayEvents = events.filter(e => e.date === dateStr);
+                       // Indikasi warna merah jika hari Minggu (idx 0) atau ada event bertipe 'libur'
+                       const isHoliday = dayEvents.some(e => e.type === 'libur') || new Date(year, month, day).getDay() === 0;
+
+                       return (
+                         <div key={day} onClick={() => handleDayClick(day)} className="h-16 md:h-28 border border-gray-100 rounded-lg p-1 hover:border-green-500 hover:shadow-md cursor-pointer transition flex flex-col group overflow-hidden bg-white">
+                           <div className="flex justify-between items-start">
+                             <span className={`text-xs md:text-sm font-bold w-6 h-6 flex items-center justify-center rounded-full ${isHoliday ? 'text-red-600 bg-red-50' : 'text-gray-700 group-hover:bg-green-50 group-hover:text-green-600'}`}>{day}</span>
+                             {dayEvents.length > 0 && <div className="md:hidden w-2 h-2 rounded-full bg-blue-500 mt-1"></div>}
+                           </div>
+                           <div className="flex-1 overflow-y-auto hide-scrollbar space-y-1 mt-1 hidden md:block">
+                             {dayEvents.map(e => (
+                               <div key={e.id} className={`text-[10px] px-1.5 py-1 rounded truncate border ${eventTypes[e.type].color}`} title={e.title}>
+                                 {e.title}
+                               </div>
+                             ))}
+                           </div>
+                         </div>
+                       )
+                     })}
+                   </div>
+                </div>
+
+                {/* List Daftar Agenda */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col h-[500px] lg:h-auto">
+                  <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center pb-3 border-b border-gray-100">
+                     <ListIcon className="mr-2 text-green-600"/> Agenda {monthNames[month]}
+                  </h3>
+                  <div className="flex-1 overflow-y-auto space-y-3 hide-scrollbar pr-2">
+                     {events.filter(e => {
+                       const eMonth = new Date(e.date).getMonth();
+                       const eYear = new Date(e.date).getFullYear();
+                       return eMonth === month && eYear === year;
+                     }).sort((a,b) => new Date(a.date) - new Date(b.date)).map(e => (
+                       <div key={e.id} className="flex items-start p-3 border border-gray-100 bg-gray-50 hover:bg-white rounded-lg relative group transition shadow-sm hover:shadow">
+                          <div className={`w-3 h-3 mt-1.5 mr-3 rounded-full flex-shrink-0 ${eventTypes[e.type].dot}`}></div>
+                          <div className="flex-1 pr-6">
+                            <p className="font-bold text-sm text-gray-800 leading-tight mb-1">{e.title}</p>
+                            <p className="text-[11px] font-medium text-gray-500 bg-white inline-block px-2 py-0.5 rounded border border-gray-200">
+                               {new Date(e.date).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'})}
+                            </p>
+                          </div>
+                          <button onClick={() => deleteEvent(e.id)} className="absolute right-2 top-2 p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded opacity-0 group-hover:opacity-100 transition">
+                             <Trash size={16}/>
+                          </button>
+                       </div>
+                     ))}
+                     {events.filter(e => new Date(e.date).getMonth() === month && new Date(e.date).getFullYear() === year).length === 0 && (
+                       <div className="text-center py-10">
+                         <Calendar className="mx-auto text-gray-300 mb-2" size={48} />
+                         <p className="text-sm text-gray-500">Tidak ada agenda di bulan ini.</p>
+                       </div>
+                     )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Input Penambahan Kegiatan */}
+              {showModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4">
+                  <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 transform transition-all">
+                    <div className="flex justify-between items-center mb-5">
+                      <h3 className="text-xl font-bold text-gray-800">Tambah Kegiatan Baru</h3>
+                      <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600"><X size={24} /></button>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">Tanggal</label>
+                        <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">Nama Kegiatan</label>
+                        <input type="text" placeholder="Contoh: Ujian Tengah Semester" value={newEventTitle} onChange={(e) => setNewEventTitle(e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Jenis Kegiatan</label>
+                        <div className="grid grid-cols-2 gap-2">
+                          {Object.keys(eventTypes).map(key => (
+                            <button key={key} onClick={() => setNewEventType(key)} className={`p-3 border rounded-xl text-xs font-bold text-left flex items-center transition ${newEventType === key ? 'border-green-500 bg-green-50 ring-1 ring-green-500' : 'border-gray-200 bg-white hover:bg-gray-50'}`}>
+                              <div className={`w-3 h-3 mr-2 rounded-full ${eventTypes[key].dot}`}></div>
+                              {eventTypes[key].label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-8 flex justify-end space-x-3">
+                      <button onClick={() => setShowModal(false)} className="px-5 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition">Batal</button>
+                      <button onClick={addEvent} className="px-5 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition shadow-sm">Simpan Kegiatan</button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        };
+
         const DashboardYayasan = () => (
           <div className="space-y-6 pb-20 lg:pb-0">
             <h2 className="text-2xl font-bold text-gray-800">Dashboard Ketua Yayasan</h2>
@@ -299,46 +483,9 @@
           </div>
         );
 
-        const DashboardGuru = () => (
-          <div className="space-y-6 pb-20 lg:pb-0">
-            <h2 className="text-2xl font-bold text-gray-800">Dashboard Guru / Ustadz</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <StatCard title="Jadwal Hari Ini" value="4 Kelas" icon={Clock} color="bg-blue-500" />
-              <StatCard title="Tugas Belum Dinilai" value="28" icon={FileText} color="bg-yellow-500" />
-            </div>
-          </div>
-        );
-
-        const DashboardKesantrian = () => (
-          <div className="space-y-6 pb-20 lg:pb-0">
-            <h2 className="text-2xl font-bold text-gray-800">Dashboard Kepala Kesantrian</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <StatCard title="Santri Aktif" value="1,240" icon={Users} color="bg-blue-500" />
-              <StatCard title="Izin Pulang/Keluar" value="15" icon={FileText} color="bg-yellow-500" />
-              <StatCard title="Pelanggaran Hari Ini" value="3" icon={ShieldCheck} color="bg-red-500" />
-              <StatCard title="Poin Prestasi" value="+120" icon={Trophy} color="bg-green-500" />
-            </div>
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <h3 className="text-lg font-bold text-gray-800 mb-4">Log Aktivitas Terbaru</h3>
-              <div className="space-y-3">
-                 <div className="p-4 bg-red-50 rounded-lg border-l-4 border-red-500 flex justify-between items-center">
-                    <div>
-                      <p className="font-bold text-gray-800">Terlambat Sholat Subuh Jamaah</p>
-                      <p className="text-sm text-gray-500">Budi Santoso (VIII-B) • Hari ini, 05:00 WIB</p>
-                    </div>
-                    <span className="bg-red-200 text-red-800 px-2 py-1 rounded text-xs font-bold">-10 Poin</span>
-                 </div>
-                 <div className="p-4 bg-green-50 rounded-lg border-l-4 border-green-500 flex justify-between items-center">
-                    <div>
-                      <p className="font-bold text-gray-800">Juara 1 Pidato B. Arab</p>
-                      <p className="text-sm text-gray-500">Abdullah Azzam (VII-A) • Kemarin, 14:00 WIB</p>
-                    </div>
-                    <span className="bg-green-200 text-green-800 px-2 py-1 rounded text-xs font-bold">+50 Poin</span>
-                 </div>
-              </div>
-            </div>
-          </div>
-        );
+        // --- DASHBOARD GURU & MUSYRIF --- (Sederhana untuk demo)
+        const DashboardGuru = () => <div className="space-y-6"><h2 className="text-2xl font-bold">Dashboard Guru</h2><StatCard title="Jadwal Hari Ini" value="4 Kelas" icon={Clock} color="bg-blue-500" /></div>;
+        const DashboardKesantrian = () => <div className="space-y-6"><h2 className="text-2xl font-bold">Dashboard Kesantrian</h2><StatCard title="Santri Aktif" value="1,240" icon={Users} color="bg-blue-500" /></div>;
 
         const DashboardMusyrif = () => (
           <div className="space-y-6 pb-20 lg:pb-0">
@@ -349,53 +496,13 @@
               <StatCard title="Mutaba'ah Hari Ini" value="85%" icon={Moon} color="bg-blue-500" />
               <StatCard title="Kebersihan Kamar" value="A (Baik)" icon={CheckSquare} color="bg-green-500" />
             </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 className="text-lg font-bold text-gray-800 mb-4">Akses Cepat Input Data</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <button className="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-xl text-blue-700 hover:bg-blue-100 transition">
-                    <Moon size={32} className="mb-2" />
-                    <span className="font-medium text-sm text-center">Mutaba'ah Ibadah</span>
-                  </button>
-                  <button className="flex flex-col items-center justify-center p-4 bg-red-50 rounded-xl text-red-700 hover:bg-red-100 transition">
-                    <ShieldCheck size={32} className="mb-2" />
-                    <span className="font-medium text-sm text-center">Catat Pelanggaran</span>
-                  </button>
-                  <button className="flex flex-col items-center justify-center p-4 bg-green-50 rounded-xl text-green-700 hover:bg-green-100 transition">
-                    <CheckSquare size={32} className="mb-2" />
-                    <span className="font-medium text-sm text-center">Ceklist Kebersihan</span>
-                  </button>
-                  <button className="flex flex-col items-center justify-center p-4 bg-yellow-50 rounded-xl text-yellow-700 hover:bg-yellow-100 transition">
-                    <Activity size={32} className="mb-2" />
-                    <span className="font-medium text-sm text-center">Lapor Santri Sakit</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 className="text-lg font-bold text-gray-800 mb-4">Daftar Hadir Sholat Jamaah (Subuh)</h3>
-                <div className="space-y-2">
-                  {[
-                    { name: 'Abdullah Azzam', room: 'Kamar Abu Bakar 1', status: 'Hadir', color: 'text-green-600', bg: 'bg-green-100' },
-                    { name: 'Umar Al-Faruq', room: 'Kamar Abu Bakar 1', status: 'Hadir', color: 'text-green-600', bg: 'bg-green-100' },
-                    { name: 'Budi Santoso', room: 'Kamar Abu Bakar 2', status: 'Terlambat', color: 'text-yellow-600', bg: 'bg-yellow-100' },
-                    { name: 'Ahmad Rizki', room: 'Kamar Abu Bakar 2', status: 'Alfa/Tidur', color: 'text-red-600', bg: 'bg-red-100' },
-                  ].map((santri, i) => (
-                    <div key={i} className="flex justify-between items-center p-3 hover:bg-gray-50 border-b border-gray-100 last:border-0 rounded-lg">
-                      <div>
-                        <p className="font-medium text-gray-800 text-sm">{santri.name}</p>
-                        <p className="text-xs text-gray-500">{santri.room}</p>
-                      </div>
-                      <span className={`px-2 py-1 rounded text-xs font-bold ${santri.bg} ${santri.color}`}>
-                        {santri.status}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <button className="mt-4 w-full bg-blue-50 text-blue-600 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition">
-                  Lihat Semua Santri Binaan
-                </button>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+              <h3 className="text-lg font-bold text-gray-800 mb-4">Akses Cepat Input Data</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <button className="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-xl text-blue-700 hover:bg-blue-100 transition"><Moon size={32} className="mb-2" /><span className="font-medium text-sm text-center">Mutaba'ah</span></button>
+                <button className="flex flex-col items-center justify-center p-4 bg-red-50 rounded-xl text-red-700 hover:bg-red-100 transition"><ShieldCheck size={32} className="mb-2" /><span className="font-medium text-sm text-center">Pelanggaran</span></button>
+                <button className="flex flex-col items-center justify-center p-4 bg-green-50 rounded-xl text-green-700 hover:bg-green-100 transition"><CheckSquare size={32} className="mb-2" /><span className="font-medium text-sm text-center">Kebersihan</span></button>
+                <button className="flex flex-col items-center justify-center p-4 bg-yellow-50 rounded-xl text-yellow-700 hover:bg-yellow-100 transition"><Activity size={32} className="mb-2" /><span className="font-medium text-sm text-center">Santri Sakit</span></button>
               </div>
             </div>
           </div>
@@ -404,208 +511,90 @@
         const DashboardWebsite = () => (
           <div className="space-y-6 pb-20 lg:pb-0">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-gray-800">Manajemen Website & Portal</h2>
+              <h2 className="text-2xl font-bold text-gray-800">Manajemen Website</h2>
               <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 flex items-center shadow-sm">
                 <Globe size={16} className="mr-2" /> Kunjungi Situs
               </button>
             </div>
-            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <StatCard title="Pengunjung Hari Ini" value="1,420" icon={Activity} color="bg-blue-500" />
               <StatCard title="Artikel Aktif" value="86" icon={Rss} color="bg-green-500" />
               <StatCard title="Pendaftar Baru" value="24" icon={Users} color="bg-purple-500" />
             </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 className="text-lg font-bold text-gray-800 mb-4">Draft Berita Terbaru</h3>
-                <div className="space-y-4">
-                  {[
-                    { title: 'Penerimaan Santri Baru Gelombang 2', date: '10 Mei 2026', status: 'Diterbitkan' },
-                    { title: 'Prestasi Juara Umum MTQ Tingkat Provinsi', date: '08 Mei 2026', status: 'Diterbitkan' },
-                    { title: 'Kegiatan Outbound Kelas VIII', date: 'Belum dijadwalkan', status: 'Draft' },
-                  ].map((news, i) => (
-                    <div key={i} className="flex justify-between items-center border-b pb-3 last:border-0 last:pb-0">
-                      <div>
-                        <p className="font-semibold text-gray-800">{news.title}</p>
-                        <p className="text-sm text-gray-500">{news.date}</p>
-                      </div>
-                      <span className={`px-2 py-1 text-xs rounded-md ${news.status === 'Draft' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>
-                        {news.status}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <button className="mt-4 w-full bg-gray-50 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 border border-gray-200">
-                  Buat Artikel Baru
-                </button>
-              </div>
-
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 className="text-lg font-bold text-gray-800 mb-4">Pesan Masuk (Buku Tamu)</h3>
-                <div className="space-y-4">
-                  <div className="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                    <p className="font-bold text-gray-800 text-sm">Bpk. Haryanto</p>
-                    <p className="text-xs text-gray-500 mb-1">haryanto.email@gmail.com</p>
-                    <p className="text-sm text-gray-700">"Apakah masih ada kuota untuk kelas Tahfidz khusus SMP?"</p>
-                    <button className="text-blue-600 text-xs font-bold mt-2 hover:underline">Balas Pesan</button>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         );
 
         const DashboardLeaderboard = () => {
-          const [time, setTime] = useState(new Date());
-          const [announcementIdx, setAnnouncementIdx] = useState(0);
-
-          const announcements = [
-            "⭐ Selamat kepada ananda Abdullah Azzam atas pencapaian Hafalan 15 Juz bulan ini!",
-            "📢 Pendaftaran Santri Baru Tahun Ajaran 2026/2027 Gelombang Kedua telah dibuka.",
-            "🗓️ Kajian Rutin Wali Santri akan dilaksanakan pada hari Ahad, 17 Mei 2026."
-          ];
-
           const topSantri = [
             { rank: 1, name: 'Abdullah Azzam', class: 'VIII-A', hafalan: '15 Juz', points: 950 },
             { rank: 2, name: 'Fatimah Az-Zahra', class: 'IX-B', hafalan: '14 Juz', points: 890 },
             { rank: 3, name: 'Umar Al-Faruq', class: 'VII-C', hafalan: '10 Juz', points: 720 },
             { rank: 4, name: 'Aisyah Humairah', class: 'VIII-B', hafalan: '9 Juz', points: 680 },
-            { rank: 5, name: 'Ali bin Abi Thalib', class: 'VII-A', hafalan: '7 Juz', points: 540 },
           ];
-
-          useEffect(() => {
-            const timer = setInterval(() => setTime(new Date()), 1000);
-            const ticker = setInterval(() => {
-              setAnnouncementIdx((prev) => (prev + 1) % announcements.length);
-            }, 6000); // Ganti pengumuman tiap 6 detik
-
-            return () => {
-              clearInterval(timer);
-              clearInterval(ticker);
-            };
-          }, [announcements.length]);
-
           return (
-            <div className="bg-gray-900 rounded-2xl shadow-2xl overflow-hidden text-white flex flex-col pb-20 lg:pb-0" style={{ minHeight: 'calc(100vh - 140px)' }}>
-              {/* Header Layar TV */}
-              <div className="bg-gray-800 p-6 flex justify-between items-center border-b border-gray-700">
-                <div className="flex items-center space-x-4">
-                  <div className="text-yellow-400"><Trophy size={40} /></div>
-                  <div>
-                    <h1 className="text-2xl font-black tracking-wider uppercase text-yellow-400">Leaderboard Tahfidz</h1>
-                    <p className="text-gray-400 text-sm flex items-center">
-                      <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse mr-2"></span>
-                      Live Update
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right hidden md:block">
-                  <h2 className="text-3xl font-bold font-mono">{time.toLocaleTimeString('id-ID')}</h2>
-                  <p className="text-gray-400">{time.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            <div className="bg-gray-900 rounded-2xl shadow-2xl overflow-hidden text-white flex flex-col pb-20 lg:pb-0">
+              <div className="bg-gray-800 p-6 flex items-center border-b border-gray-700 space-x-4">
+                <div className="text-yellow-400"><Trophy size={40} /></div>
+                <div>
+                  <h1 className="text-2xl font-black tracking-wider uppercase text-yellow-400">Leaderboard Tahfidz</h1>
+                  <p className="text-gray-400 text-sm flex items-center"><span className="w-2 h-2 bg-red-500 rounded-full animate-pulse mr-2"></span>Live Update</p>
                 </div>
               </div>
-
-              {/* Konten Utama */}
-              <div className="flex-1 p-4 md:p-8 grid grid-cols-1 gap-4 overflow-y-auto">
-                <div className="hidden md:flex justify-between text-gray-400 text-xs font-bold uppercase px-6 pb-2 border-b border-gray-700">
-                  <div className="w-16">Peringkat</div>
-                  <div className="flex-1">Nama Santri</div>
-                  <div className="w-32 text-center">Kelas</div>
-                  <div className="w-48 text-right">Capaian Hafalan</div>
-                </div>
-                
+              <div className="p-4 md:p-8 space-y-4">
                 {topSantri.map((santri) => (
-                  <div key={santri.rank} className="bg-gray-800 rounded-xl p-4 md:p-6 flex items-center justify-between border border-gray-700 hover:border-yellow-500 hover:bg-gray-750 transition-all transform hover:scale-[1.01] shadow-lg">
-                    <div className="w-12 md:w-16 flex justify-center">
-                      {santri.rank === 1 ? <div className="bg-yellow-400 text-yellow-900 w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl"><Star size={20} /></div> :
-                       santri.rank === 2 ? <div className="bg-gray-300 text-gray-800 w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl">2</div> :
-                       santri.rank === 3 ? <div className="bg-amber-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl">3</div> :
-                       <div className="text-gray-500 font-bold text-xl">{santri.rank}</div>}
-                    </div>
-                    <div className="flex-1 pl-2 md:pl-4">
-                      <h3 className="text-lg md:text-2xl font-bold text-white">{santri.name}</h3>
-                      <p className="text-xs md:text-sm text-yellow-500">{santri.points} Poin Mutaba'ah</p>
-                    </div>
-                    <div className="w-20 md:w-32 text-center">
-                      <span className="bg-gray-700 px-2 py-1 md:px-3 md:py-1 rounded text-gray-300 font-medium text-xs md:text-sm">{santri.class}</span>
-                    </div>
-                    <div className="hidden md:block w-48 text-right">
-                      <h4 className="text-2xl font-black text-green-400">{santri.hafalan}</h4>
-                    </div>
+                  <div key={santri.rank} className="bg-gray-800 rounded-xl p-4 flex items-center justify-between border border-gray-700 shadow-lg">
+                    <div className="w-12 md:w-16 flex justify-center"><div className="bg-yellow-400 text-yellow-900 w-10 h-10 rounded-full flex items-center justify-center font-bold text-xl">{santri.rank}</div></div>
+                    <div className="flex-1 pl-2 md:pl-4"><h3 className="text-xl font-bold text-white">{santri.name}</h3><p className="text-sm text-yellow-500">{santri.points} Poin Mutaba'ah</p></div>
+                    <div className="w-32 text-center"><span className="bg-gray-700 px-3 py-1 rounded text-gray-300 font-medium text-sm">{santri.class}</span></div>
+                    <div className="w-32 text-right"><h4 className="text-xl font-black text-green-400">{santri.hafalan}</h4></div>
                   </div>
                 ))}
-              </div>
-
-              {/* Ticker / Running Text Area */}
-              <div className="bg-green-700 text-white p-4 flex items-center">
-                <div className="bg-green-900 px-4 py-1 rounded font-bold text-sm uppercase tracking-wider whitespace-nowrap z-10 mr-4">
-                  Info Terkini
-                </div>
-                <div className="overflow-hidden flex-1 relative h-6">
-                   <p className="absolute whitespace-nowrap animate-pulse font-medium">
-                      {announcements[announcementIdx]}
-                   </p>
-                </div>
               </div>
             </div>
           );
         };
 
-        // --- MAIN APP COMPONENT ---
         function App() {
           const [role, setRole] = useState(null);
           const [currentView, setCurrentView] = useState('dashboard');
-          const [language, setLanguage] = useState('id');
+          
+          // State untuk kontrol Sidebar (Desktop/Tablet)
+          const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-          // Mapping Terjemahan
           const translations = {
-            id: {
-              title: 'SIMS Terpadu', subtitle: 'Pilih role untuk masuk ke prototipe',
-              dashboard: 'Dashboard Utama',
-              roles: { yayasan: 'Ketua Yayasan', kepsek: 'Kepala Sekolah', bendahara: 'Bendahara', admin: 'Administrator', kesantrian: 'Kepala Kesantrian', musyrif: 'Musyrif Asrama', guru: 'Guru / Ustadz', tahfidz: 'Pengampu Tahfidz', walisantri: 'Wali Santri', santri: 'Santri', website: 'Pengelola Website', leaderboard: 'Leaderboard Publik' }
-            }
+            roles: { yayasan: 'Ketua Yayasan', kepsek: 'Kepala Sekolah', bendahara: 'Bendahara', admin: 'Administrator', kesantrian: 'Kepala Kesantrian', musyrif: 'Musyrif Asrama', guru: 'Guru / Ustadz', tahfidz: 'Pengampu Tahfidz', walisantri: 'Wali Santri', santri: 'Santri', website: 'Pengelola Website', leaderboard: 'Leaderboard Publik' }
           };
-          const t = translations['id'];
 
-          // --- LOGIN SCREEN ---
+          // Halaman Login / Pilih Role
           if (!role) {
             const roles = [
-              { id: 'yayasan', name: t.roles.yayasan, icon: LayoutDashboard, color: 'bg-indigo-500' },
-              { id: 'kepsek', name: t.roles.kepsek, icon: GraduationCap, color: 'bg-blue-500' },
-              { id: 'bendahara', name: t.roles.bendahara, icon: Wallet, color: 'bg-emerald-500' },
-              { id: 'admin', name: t.roles.admin, icon: Settings, color: 'bg-gray-700' },
-              { id: 'kesantrian', name: t.roles.kesantrian, icon: ShieldCheck, color: 'bg-red-600' },
-              { id: 'musyrif', name: t.roles.musyrif, icon: Moon, color: 'bg-sky-600' },
-              { id: 'guru', name: t.roles.guru, icon: BookOpen, color: 'bg-teal-500' },
-              { id: 'tahfidz', name: t.roles.tahfidz, icon: BookMarked, color: 'bg-green-600' },
-              { id: 'walisantri', name: t.roles.walisantri, icon: Users, color: 'bg-orange-500' },
-              { id: 'santri', name: t.roles.santri, icon: Award, color: 'bg-purple-500' },
-              { id: 'website', name: t.roles.website, icon: Globe, color: 'bg-cyan-500' },
-              { id: 'leaderboard', name: t.roles.leaderboard, icon: Trophy, color: 'bg-amber-500' }
+              { id: 'yayasan', name: translations.roles.yayasan, icon: LayoutDashboard, color: 'bg-indigo-500' },
+              { id: 'kepsek', name: translations.roles.kepsek, icon: GraduationCap, color: 'bg-blue-500' },
+              { id: 'bendahara', name: translations.roles.bendahara, icon: Wallet, color: 'bg-emerald-500' },
+              { id: 'admin', name: translations.roles.admin, icon: Settings, color: 'bg-gray-700' },
+              { id: 'kesantrian', name: translations.roles.kesantrian, icon: ShieldCheck, color: 'bg-red-600' },
+              { id: 'musyrif', name: translations.roles.musyrif, icon: Moon, color: 'bg-sky-600' },
+              { id: 'guru', name: translations.roles.guru, icon: BookOpen, color: 'bg-teal-500' },
+              { id: 'tahfidz', name: translations.roles.tahfidz, icon: BookMarked, color: 'bg-green-600' },
+              { id: 'walisantri', name: translations.roles.walisantri, icon: Users, color: 'bg-orange-500' },
+              { id: 'santri', name: translations.roles.santri, icon: Award, color: 'bg-purple-500' },
+              { id: 'website', name: translations.roles.website, icon: Globe, color: 'bg-cyan-500' },
+              { id: 'leaderboard', name: translations.roles.leaderboard, icon: Trophy, color: 'bg-amber-500' }
             ];
 
             return (
               <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
                 <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-                  <div className="mx-auto h-16 w-16 text-green-600 flex items-center justify-center">
-                     <GraduationCap size={64} />
-                  </div>
-                  <h2 className="mt-6 text-3xl font-extrabold text-gray-900">{t.title}</h2>
-                  <p className="mt-2 text-sm text-gray-600">{t.subtitle}</p>
+                  <div className="mx-auto h-16 w-16 text-green-600 flex items-center justify-center"><GraduationCap size={64} /></div>
+                  <h2 className="mt-6 text-3xl font-extrabold text-gray-900">SIMS Terpadu</h2>
+                  <p className="mt-2 text-sm text-gray-600">Pilih role untuk masuk ke prototipe</p>
                 </div>
-                <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-3xl px-4">
+                <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-5xl px-4">
                   <div className="bg-white py-8 px-4 shadow-xl rounded-2xl sm:px-10 border border-gray-100">
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                       {roles.map((r) => (
-                        <button
-                          key={r.id}
-                          onClick={() => { setRole(r.id); setCurrentView('dashboard'); }}
-                          className="flex flex-col items-center justify-center p-4 border rounded-xl hover:shadow-md transition-all hover:-translate-y-1 bg-white group"
-                        >
-                          <div className={`p-3 rounded-full text-white flex items-center justify-center ${r.color} mb-3 group-hover:scale-110 transition-transform`}>
-                            <r.icon size={24} />
-                          </div>
+                        <button key={r.id} onClick={() => { setRole(r.id); setCurrentView('dashboard'); setIsSidebarOpen(true); }} className="flex flex-col items-center justify-center p-4 border rounded-xl hover:shadow-md transition-all hover:-translate-y-1 bg-white group">
+                          <div className={`p-3 rounded-full text-white flex items-center justify-center ${r.color} mb-3 group-hover:scale-110 transition-transform`}><r.icon size={24} /></div>
                           <span className="text-xs font-medium text-gray-700 text-center leading-tight">{r.name}</span>
                         </button>
                       ))}
@@ -616,102 +605,129 @@
             );
           }
 
-          // Konfigurasi Menu Sidebar & Bottom Nav
           const getMenus = () => {
-            const commonMenus = [{ id: 'dashboard', icon: LayoutDashboard, label: 'Beranda' }];
             let specificMenus = [];
             switch(role) {
               case 'admin': specificMenus = [
+                { id: 'dashboard', icon: LayoutDashboard, label: 'Beranda' },
                 { id: 'akademik', icon: BookOpen, label: 'Akademik & Belajar' },
-                { id: 'pengguna', icon: Users, label: 'Manajemen Pengguna' },
-                { id: 'pengaturan', icon: Settings, label: 'Sistem SIMS' }
+                { id: 'kesantrian', icon: ShieldCheck, label: 'Kesantrian & Musyrifah' },
+                { id: 'hris', icon: Briefcase, label: 'HRIS SDM' },
+                { id: 'ekskul', icon: Basketball, label: 'Ekstrakurikuler' },
+                { id: 'ppdb', icon: Megaphone, label: 'PPDB' },
+                { id: 'keuangan', icon: Bank, label: 'Keuangan' },
+                { id: 'laporan', icon: ChartBar, label: 'Laporan & Export' },
+                { id: 'pengaturan', icon: Settings, label: 'Pengaturan' }
               ]; break;
               case 'kesantrian': specificMenus = [
+                { id: 'dashboard', icon: LayoutDashboard, label: 'Beranda' },
                 { id: 'pelanggaran', icon: ShieldCheck, label: 'Data Pelanggaran' },
-                { id: 'perizinan', icon: FileText, label: 'Perizinan Santri' }
               ]; break;
               case 'musyrif': specificMenus = [
+                { id: 'dashboard', icon: LayoutDashboard, label: 'Beranda' },
                 { id: 'mutabaah', icon: Moon, label: 'Mutaba\'ah Ibadah' },
-                { id: 'kebersihan', icon: CheckSquare, label: 'Kebersihan Kamar' },
-                { id: 'kesehatan', icon: Activity, label: 'Kesehatan Santri' }
+                { id: 'kebersihan', icon: CheckSquare, label: 'Kebersihan Kamar' }
               ]; break;
-              case 'guru': specificMenus = [{ id: 'jadwal', icon: Calendar, label: 'Jadwal' }, { id: 'presensi', icon: CheckCircle, label: 'Presensi' }, { id: 'nilai', icon: Award, label: 'Nilai' }]; break;
-              case 'website': specificMenus = [{ id: 'berita', icon: Rss, label: 'Kelola Berita' }, { id: 'statistik', icon: Activity, label: 'Statistik Web' }]; break;
-              case 'leaderboard': specificMenus = [{ id: 'pengaturan_layar', icon: Monitor, label: 'Pengaturan Layar' }]; break;
-              default: specificMenus = [{ id: 'menu_lain', icon: FileText, label: 'Menu Lainnya' }]; break;
+              case 'website': specificMenus = [
+                { id: 'dashboard', icon: LayoutDashboard, label: 'Beranda' },
+                { id: 'berita', icon: Rss, label: 'Kelola Berita' }
+              ]; break;
+              case 'leaderboard': specificMenus = [
+                { id: 'dashboard', icon: Trophy, label: 'Leaderboard' }
+              ]; break;
+              default: specificMenus = [{ id: 'dashboard', icon: LayoutDashboard, label: 'Beranda' }, { id: 'menu_lain', icon: FileText, label: 'Menu Lainnya' }]; break;
             }
-            return [...commonMenus, ...specificMenus];
+            return specificMenus;
           };
 
           const menus = getMenus();
-          const roleName = t.roles[role];
+          const roleName = translations.roles[role] || 'Pengguna';
 
           return (
             <div className="flex h-screen bg-gray-50 overflow-hidden font-sans">
               
-              {/* SIDEBAR (Desktop) - Disembunyikan di Mobile */}
-              <aside className="hidden lg:flex flex-col w-64 bg-white shadow-xl z-30">
-                <div className="flex items-center justify-center h-16 bg-green-600 text-white px-4">
-                  <GraduationCap className="mr-2" size={24} />
-                  <span className="text-xl font-bold truncate">SIMS Terpadu</span>
-                </div>
-                <div className="p-4 flex flex-col h-full overflow-y-auto">
-                  <div className="mb-6 p-4 bg-gray-50 rounded-lg text-center">
-                    <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-2 flex items-center justify-center text-gray-500 font-bold text-xl">
-                      {roleName.charAt(0)}
-                    </div>
-                    <p className="font-bold text-gray-800">{roleName}</p>
-                    <p className="text-xs text-green-600 font-medium">Online</p>
+              {}
+              <aside className={`hidden lg:flex flex-col bg-white shadow-xl z-30 transition-all duration-300 ease-in-out shrink-0 ${isSidebarOpen ? 'w-64' : 'w-0 opacity-0 overflow-hidden'}`}>
+                <div className="w-64 flex flex-col h-full">
+                  <div className="flex items-center justify-center h-16 bg-green-600 text-white px-4 shrink-0">
+                    <GraduationCap className="mr-2" size={24} />
+                    <span className="text-xl font-bold truncate">SIMS Terpadu</span>
                   </div>
-                  
-                  <nav className="flex-1 space-y-1">
-                    {menus.map((menu, index) => (
-                      <a 
-                        key={index} href="#" 
-                        onClick={(e) => { e.preventDefault(); setCurrentView(menu.id); }}
-                        className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${['dashboard', 'akademik'].includes(currentView) && currentView === menu.id ? 'bg-green-50 text-green-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}
-                      >
-                        <menu.icon size={20} className={`mr-3 ${currentView === menu.id ? 'text-green-600' : 'text-gray-400'}`} />
-                        {menu.label}
-                      </a>
-                    ))}
-                  </nav>
+                  <div className="p-4 flex flex-col h-full overflow-y-auto">
+                    <div className="mb-6 p-4 bg-gray-50 rounded-lg text-center">
+                      <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-2 flex items-center justify-center text-gray-500 font-bold text-xl">
+                        {roleName.charAt(0)}
+                      </div>
+                      <p className="font-bold text-gray-800 truncate">{roleName}</p>
+                      <p className="text-xs text-green-600 font-medium">Online</p>
+                    </div>
+                    
+                    <nav className="flex-1 space-y-1">
+                      {menus.map((menu, index) => (
+                        <a 
+                          key={index} href="#" 
+                          onClick={(e) => { e.preventDefault(); setCurrentView(menu.id); }}
+                          className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${currentView === menu.id ? 'bg-green-50 text-green-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}
+                        >
+                          <menu.icon size={20} className={`mr-3 shrink-0 ${currentView === menu.id ? 'text-green-600' : 'text-gray-400'}`} />
+                          <span className="truncate">{menu.label}</span>
+                        </a>
+                      ))}
+                    </nav>
 
-                  <div className="mt-auto pt-4 border-t border-gray-200">
-                    <button onClick={() => { setRole(null); setCurrentView('dashboard'); }} className="flex items-center w-full px-4 py-3 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
-                      <LogOut className="mr-3" size={20} /> Keluar
-                    </button>
+                    <div className="mt-auto pt-4 border-t border-gray-200">
+                      <button onClick={() => { setRole(null); setCurrentView('dashboard'); }} className="flex items-center w-full px-4 py-3 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+                        <LogOut className="mr-3 shrink-0" size={20} /> <span className="truncate">Keluar</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </aside>
 
-              {/* AREA UTAMA KONTEN */}
+              {}
               <div className="flex-1 flex flex-col h-screen overflow-hidden">
-                {/* Header Atas */}
-                <header className="flex items-center justify-between h-16 bg-white shadow-sm border-b border-gray-200 px-4 sm:px-6 lg:px-8 z-10">
+                <header className="flex items-center justify-between h-16 bg-white shadow-sm border-b border-gray-200 px-4 sm:px-6 lg:px-8 z-10 shrink-0">
                   <div className="flex items-center">
+                    {/* Tombol Hamburger Desktop */}
+                    <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="hidden lg:flex p-2 mr-4 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors">
+                      <ListIcon size={24} />
+                    </button>
+                    
                     <div className="lg:hidden flex items-center text-green-600 font-bold text-lg">
                       <GraduationCap className="mr-2" size={24} /> SIMS Mobile
                     </div>
-                    <button onClick={() => { setRole(null); setCurrentView('dashboard'); }} className="hidden lg:flex items-center text-gray-600 hover:text-gray-900 ml-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition border border-transparent hover:border-gray-200">
-                      <ArrowLeft size={18} className="mr-2" /> <span className="text-sm font-medium">Kembali / Ganti Role</span>
-                    </button>
                   </div>
                   <div className="flex items-center space-x-4">
+                    <button onClick={() => setRole(null)} className="hidden lg:flex items-center text-gray-500 hover:text-gray-800 px-3 py-2 rounded-lg hover:bg-gray-100 transition border border-transparent">
+                      <ArrowLeft size={18} className="mr-2" /> <span className="text-sm font-medium">Ganti Role</span>
+                    </button>
                     <div className="h-8 w-8 rounded-full bg-green-600 flex items-center justify-center text-white font-bold text-sm lg:hidden">
                       {roleName.charAt(0)}
                     </div>
                   </div>
                 </header>
 
-                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 sm:p-6 lg:p-8">
+                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 sm:p-6 lg:p-8 relative">
                   <div className="max-w-7xl mx-auto h-full">
                     
-                    {/* Routing View Sederhana */}
-                    {role === 'admin' && currentView === 'dashboard' && <DashboardAdmin setCurrentView={setCurrentView} />}
-                    {role === 'admin' && currentView === 'akademik' && <DashboardAdmin setCurrentView={setCurrentView} />}
+                    {/* Routing Layar Admin */}
+                    {role === 'admin' && currentView === 'dashboard' && <AdminDashboardOverview />}
+                    {role === 'admin' && currentView === 'akademik' && <AdminAkademikView setCurrentView={setCurrentView} />}
+                    {role === 'admin' && currentView === 'kesantrian' && <AdminKesantrianView setCurrentView={setCurrentView} />}
+                    {role === 'admin' && currentView === 'hris' && <AdminHRISView setCurrentView={setCurrentView} />}
                     {role === 'admin' && currentView === 'data_guru' && <AdminDataGuru onBack={() => setCurrentView('akademik')} />}
+                    {role === 'admin' && currentView === 'kaldik' && <AdminKaldik onBack={() => setCurrentView('akademik')} />}
                     
+                    {/* Placeholder Untuk Modul Admin yang Belum Dibuat Sub-nya */}
+                    {role === 'admin' && ['ekskul', 'ppdb', 'keuangan', 'laporan', 'pengaturan'].includes(currentView) && (
+                       <div className="flex flex-col items-center justify-center h-64 text-gray-400">
+                         <Settings size={64} className="mb-4 text-gray-300 animate-spin-slow" />
+                         <h3 className="text-xl font-bold text-gray-600 mb-2">Modul {menus.find(m => m.id === currentView)?.label}</h3>
+                         <p>Sub-menu dan fitur untuk modul ini sedang dalam tahap pengembangan.</p>
+                       </div>
+                    )}
+
+                    {/* Routing Layar Role Lainnya */}
                     {role === 'yayasan' && currentView === 'dashboard' && <DashboardYayasan />}
                     {role === 'guru' && currentView === 'dashboard' && <DashboardGuru />}
                     {role === 'kesantrian' && currentView === 'dashboard' && <DashboardKesantrian />}
@@ -719,20 +735,20 @@
                     {role === 'website' && currentView === 'dashboard' && <DashboardWebsite />}
                     {role === 'leaderboard' && currentView === 'dashboard' && <DashboardLeaderboard />}
 
-                    {/* Fallback View */}
-                    {['admin', 'kesantrian', 'musyrif', 'guru', 'website'].includes(role) && !['dashboard', 'akademik', 'data_guru'].includes(currentView) && (
-                      <div className="flex items-center justify-center h-64 text-gray-500 flex-col pb-20 lg:pb-0">
-                        <Settings size={48} className="mb-4 text-gray-300" />
-                        <p>Menu <b>{currentView.replace('_', ' ').toUpperCase()}</b> sedang dalam pengembangan.</p>
-                        {role === 'admin' && <button onClick={() => setCurrentView('akademik')} className="mt-4 text-blue-600 hover:underline">Kembali ke Akademik</button>}
-                      </div>
+                    {/* Fallback View Untuk Role yang belum ada Dashboard Spesifiknya */}
+                    {!['admin', 'yayasan', 'guru', 'kesantrian', 'musyrif', 'website', 'leaderboard'].includes(role) && currentView === 'dashboard' && (
+                       <div className="flex flex-col items-center justify-center h-64 text-gray-400">
+                         <Settings size={64} className="mb-4 text-gray-300 animate-spin-slow" />
+                         <h3 className="text-xl font-bold text-gray-600 mb-2">Dashboard {roleName}</h3>
+                         <p>Tampilan spesifik untuk role ini sedang dalam pengembangan purwarupa.</p>
+                       </div>
                     )}
 
                   </div>
                 </main>
               </div>
 
-              {/* NAVIGATION BAR BAWAH (MOBILE ONLY) - Bisa Digeser (Scrollable) */}
+              {}
               <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex overflow-x-auto hide-scrollbar z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] px-2">
                 {menus.map((menu, index) => (
                   <button 
@@ -744,7 +760,6 @@
                     <span className="text-[10px] font-semibold whitespace-nowrap">{menu.label}</span>
                   </button>
                 ))}
-                {/* Tombol Logout Tambahan di Mobile */}
                 <button 
                     onClick={() => setRole(null)}
                     className="min-w-[80px] flex-shrink-0 flex flex-col items-center justify-center py-3 px-2 text-red-400 hover:text-red-600"
@@ -758,7 +773,6 @@
           );
         }
 
-        // Render Aplikasi
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
