@@ -11,6 +11,12 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
+    <!-- Firebase SDK (Compat version untuk kemudahan integrasi dengan CDN/Babel setup) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <!-- Tambahkan layanan lain jika perlu, misal: auth, storage -->
+    <!-- <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script> -->
+
     <style>
         /* CSS untuk menyembunyikan scrollbar pada navigasi bawah mobile */
         .hide-scrollbar::-webkit-scrollbar {
@@ -26,6 +32,30 @@
     
     <!-- Wadah Aplikasi React -->
     <div id="root"></div>
+
+    <!-- Konfigurasi Firebase -->
+    <script>
+        // TODO: Ganti nilai di bawah ini dengan konfigurasi dari Firebase Console proyek Anda
+        const firebaseConfig = {
+            apiKey: "API_KEY_ANDA",
+            authDomain: "PROYEK_ANDA.firebaseapp.com",
+            projectId: "ID_PROYEK_ANDA",
+            storageBucket: "PROYEK_ANDA.appspot.com",
+            messagingSenderId: "SENDER_ID_ANDA",
+            appId: "APP_ID_ANDA"
+        };
+        
+        // Inisialisasi Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        
+        // Inisialisasi Firestore Database
+        const db = firebase.firestore();
+        
+        // Buat instance db tersedia secara global untuk digunakan di dalam script React/Babel
+        window.firebaseDb = db;
+    </script>
 
     <script type="text/babel">
         const { useState, useEffect, useMemo } = React;
@@ -104,10 +134,12 @@
           const itemsPerPage = 5;
 
           const filteredData = useMemo(() => {
+            if (!data) return [];
             return data.filter(item => 
-              Object.values(item).some(val => 
-                String(val).toLowerCase().includes(searchQuery.toLowerCase())
-              )
+              Object.values(item).some(val => {
+                if (val === null || val === undefined) return false;
+                return String(val).toLowerCase().includes(searchQuery.toLowerCase());
+              })
             );
           }, [data, searchQuery]);
 
@@ -259,19 +291,80 @@
         };
 
         const AdminDataGuru = ({ onBack }) => {
-          const [guruList, setGuruList] = useState([
-            { id: 'G001', nama: 'Ust. Abdul Somad, Lc., MA.', nip: '198001012005011001', jabatan: 'Guru Fiqih', status: 'Aktif' },
-            { id: 'G002', nama: 'Ustz. Oki Setiana, S.Pd.', nip: '198502022010012002', jabatan: 'Guru B. Arab', status: 'Aktif' },
-            { id: 'G003', nama: 'Ust. Hanan Attaki, Lc.', nip: '198103032008011003', jabatan: 'Guru Tahfidz', status: 'Cuti' },
-          ]);
+          const [guruList, setGuruList] = useState([]);
+          const [loading, setLoading] = useState(true);
+          const [error, setError] = useState(null);
+
+          // Efek untuk mengambil data dari Firebase secara realtime
+          useEffect(() => {
+            let unsubscribe;
+            try {
+              const db = window.firebaseDb;
+              if (!db) throw new Error("Koneksi Firebase belum siap.");
+              
+              // Listener snapshot realtime ke koleksi 'guru'
+              unsubscribe = db.collection('guru').onSnapshot(
+                (snapshot) => {
+                  const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                  setGuruList(data);
+                  setLoading(false);
+                  setError(null); // Clear error jika sukses
+                },
+                (err) => {
+                  console.error("Firebase Snapshot Error:", err);
+                  // Menangkap error khas Firestore seperti permission denied
+                  if (err.code === 'permission-denied') {
+                      setError("Akses ditolak. Pastikan Rules Firestore Anda diatur ke 'allow read, write: if true;' selama tahap testing.");
+                  } else {
+                      setError("Gagal memuat data dari database: " + err.message);
+                  }
+                  setLoading(false);
+                }
+              );
+            } catch (err) {
+              console.error(err);
+              setError(err.message);
+              setLoading(false);
+            }
+            
+            // Cleanup listener saat komponen dibongkar (mencegah memory leak / bug)
+            return () => {
+              if (unsubscribe) unsubscribe();
+            };
+          }, []);
+
+          // Fungsi Hapus yang terkoneksi ke Firebase dengan penanganan bug
+          const handleDelete = async (row) => {
+            if (window.confirm(`Yakin ingin menghapus ${row.nama || 'data ini'}?`)) {
+              try {
+                await window.firebaseDb.collection('guru').doc(row.id).delete();
+                // Tidak perlu setGuruList lagi karena onSnapshot akan otomatis update (realtime)
+              } catch (err) {
+                console.error("Error menghapus dokumen: ", err);
+                alert("Gagal menghapus data: " + err.message);
+              }
+            }
+          };
+
+          // Fungsi Tambah Dummy untuk mencegah bug crash saat diclick
+          const handleAdd = () => {
+             // Contoh sederhana membuat data acak agar fitur tambah terlihat berfungsi tanpa form
+             const dummyGuru = {
+                nama: "Guru Baru " + Math.floor(Math.random() * 1000),
+                nip: "19800" + Math.floor(Math.random() * 100000),
+                jabatan: "Guru Mapel",
+                status: "Aktif"
+             };
+             window.firebaseDb.collection('guru').add(dummyGuru)
+                .catch(err => alert("Gagal menambah data: " + err.message));
+          };
 
           const columns = [
-            { header: 'ID', accessor: 'id' },
-            { header: 'Nama Lengkap', accessor: 'nama', render: (val) => <span className="font-bold text-gray-800">{val}</span> },
-            { header: 'NIP/NIY', accessor: 'nip' },
-            { header: 'Mapel', accessor: 'jabatan' },
+            { header: 'Nama Lengkap', accessor: 'nama', render: (val) => <span className="font-bold text-gray-800">{val || '-'}</span> },
+            { header: 'NIP/NIY', accessor: 'nip', render: (val) => val || '-' },
+            { header: 'Mapel', accessor: 'jabatan', render: (val) => val || '-' },
             { header: 'Status', accessor: 'status', render: (val) => (
-              <span className={`px-2 py-1 rounded-full text-xs font-bold ${val === 'Aktif' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{val}</span>
+              <span className={`px-2 py-1 rounded-full text-xs font-bold ${val === 'Aktif' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{val || 'Unknown'}</span>
             )},
           ];
 
@@ -281,7 +374,34 @@
                 <button onClick={onBack} className="p-2 bg-white rounded-lg border border-gray-200 hover:bg-gray-50"><ArrowLeft size={20} className="text-gray-600" /></button>
                 <h2 className="text-2xl font-bold text-gray-800">Manajemen Data Guru</h2>
               </div>
-              <DataGrid title="Daftar Tenaga Pendidik" columns={columns} data={guruList} onAdd={() => console.log('Add')} onEdit={() => console.log('Edit')} onDelete={(row) => setGuruList(guruList.filter(g => g.id !== row.id))} />
+              
+              {/* Penanganan Tampilan Error yang Elegan */}
+              {error && (
+                <div className="p-4 bg-red-50 text-red-700 rounded-xl border border-red-200 flex items-start space-x-3">
+                   <Warning size={24} className="flex-shrink-0 mt-0.5" />
+                   <div>
+                     <p className="font-bold">Terjadi Kesalahan</p>
+                     <p className="text-sm">{error}</p>
+                   </div>
+                </div>
+              )}
+
+              {/* Tampilan Loading agar tidak terkesan freeze/buggy */}
+              {loading ? (
+                 <div className="flex flex-col items-center justify-center p-12 bg-white rounded-xl border border-gray-100">
+                    <Activity size={40} className="text-green-500 animate-spin mb-4" />
+                    <p className="text-gray-500 font-medium">Memuat data dari Firebase...</p>
+                 </div>
+              ) : (
+                <DataGrid 
+                   title="Daftar Tenaga Pendidik" 
+                   columns={columns} 
+                   data={guruList} 
+                   onAdd={handleAdd} 
+                   onEdit={(row) => alert(`Fitur Edit untuk ${row.nama || 'ini'} belum diimplementasi pada purwarupa.`)} 
+                   onDelete={handleDelete} 
+                />
+              )}
             </div>
           );
         };
